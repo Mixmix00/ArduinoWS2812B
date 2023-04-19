@@ -70,6 +70,14 @@ void testLEDs(int numLEDS){
 }
 
 // This does an auto  gradient. It takes in the number of LEDs, the colors, the delay time, and the period (ie. how long it takes to go through the gradient(cycles). If it was 1 it would go through the gradient one time per strip.
+/**
+ * This is a function that will do an auto gradient.
+ * @param numLeds is the number of LEDs in the stri
+ * @param colors is the 2D array of colors that you want to use in the gradient.
+ * @param delayTime is the time in milliseconds that you want to wait between each LED lighting up.
+ * @param period is the number of times you would like to cycle through the colors per @param numleds leds.
+*/
+
 void autoGradient(int numLeds, int[numOfLeds][3] colors, int delayTime, float period){
     int totColors = sizeof colors / sizeof colors[0];   //This is to get the total number of colors in the array
     int CPP = numLeds / totColors; //This is to get the number of LEDs per color
@@ -92,6 +100,7 @@ void autoGradient(int numLeds, int[numOfLeds][3] colors, int delayTime, float pe
 void setup(){
     Serial.begin(9600);
     membraneKeypad = Keypad( makeKeymap(keypad), rowPins, colPins, 4, 4); //Creates the keypad
+
     //This is to make sure that the colors are not out of range
     for(int i = 0; i < sizeof colors / sizeof colors[0]; i++){
         for(int j = 0; j< sizeof colors[0] / sizeof(int); j++){
@@ -114,24 +123,36 @@ void setup(){
 
 void loop(){
     char customKey = membraneKeypad.getKey(); // This is to get the key that is pressed, if no key is pressed it will return NO_KEY. This is kind of like getButtonPressed() in the other code
-    
-    if(customKey != NO_KEY){
-        Serial.println("No key is being pressed");
+
+    switch (customKey){
+        case 'NO_KEY':
+            Serial.println("No key is being pressed");
+            break;
+        case '1':
+            Serial.println("1 is being pressed");
+            leds[0] = CRGB(colors[0][1],colors[0][0], colors[0][2]);
+            FastLED.show();
+            break;
+        case '2':
+            Serial.println("2 is being pressed");
+            leds[0] = CRGB(colors[1][1],colors[1][0], colors[1][2]);
+            FastLED.show();
+            break;
+        case '3':
+            Serial.println("3 is being pressed");
+            leds[0] = CRGB(colors[2][1],colors[2][0], colors[2][2]);
+            FastLED.show();
+            break;
+        case '4':
+            Serial.println("4 is being pressed");
+            leds[0] = CRGB(colors[3][1],colors[3][0], colors[3][2]);
+            FastLed.show();
+            break;
+        case 'A':
+            Serial.println("A is being pressed");
+            autoGradient(NUM_LEDS, colors, 3, 1);
+            break;
     }
-
-    //If(button pressed on numpad){
-        //Then change to color} else if(button pressed on numpad){
-            //Then change to other color}...
-    
-
-
-    //If we wanted to add that you have to press and hold you could maybe add an else at the end or create a boolean and if one num on the numpad is pressed disable everything
-    // here, so
-
-    
-    
-    leds[0] = CRGB(colors[0][0],colors[0][1], colors[0][2]);
-    FastLED.show();
 
 
 }
