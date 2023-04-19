@@ -1,4 +1,4 @@
-<h1>LED Keypad Controller</h1>
+<h1> WS2182B LED Keypad Controller</h1>
 <h3>This is a simple Arduino project that controls a strip of WS2812B LEDs using a 4x4 membrane keypad. The code includes a function to test the LEDs by cycling through a predefined color gradient. The user can then select a color from a pre-defined set of colors using the keypad.</h3>
 
 <h2>Requirements</h2>
