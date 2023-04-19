@@ -25,7 +25,49 @@ int colors[4][3] = {
     {50, 100, 200}
 } ;
 
+// List of colors for the gradient on testLEDs()
+int gradientA[21][3] = {
+    {153, 0, 76},
+    {204, 0, 102},
+    {255, 51, 51},
+    {255, 0, 0},
+    {255, 153, 51},
+    {255, 128, 0},
+    {255, 255, 51},
+    {128, 255, 0},
+    {51, 255, 51},
+    {0, 255, 128},
+    {0, 153, 76},
+    {51, 255, 255},
+    {0, 255, 255},
+    {102, 178, 255},
+    {0, 128, 255},
+    {0, 76, 153},
+    {0, 0, 153},
+    {0, 0, 102},
+    {102, 0, 204},
+    {76, 0, 153},
+    {51, 0, 102}
+} ;
+
 Keypad membraneKeypad;
+
+/**This is to test the LEDs. It will go through the gradientA array and set the LEDs to the colors in the array. 
+*@param numLEDS is the number of LEDs you would like to test.
+*Currently configured to test LEDs that have GRB color order (for some reason).
+*/
+void testLEDs(int numLEDS){ 
+    for(int q = 0; q < 21; q++){
+        for(int i = 0; i < numLEDS; i++){
+            leds[i] = CRGB(gradientA[q][1], gradientA[q][0], gradientA[q][2]);
+            FastLED.show();
+        }
+        delay(500);
+    }
+    fill_solid(leds, NUM_LEDS, CRGB(0,255,0));\
+    delay(2000);
+  
+}
 
 
 
@@ -42,14 +84,23 @@ void setup(){
             }
         }
     }
+
     //Here we are adding the leds. The first number is the type of led, so in this case WS2812 the second is the pin, the third is the color order
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
     FastLED.setBrightness(255);
+
+    testLEDs(NUM_LEDS);
+    FastLED.clear();  // clear all pixel data
+    FastLED.show();
 }
 
 void loop(){
-
+    char customKey = membraneKeypad.getKey(); // This is to get the key that is pressed, if no key is pressed it will return NO_KEY. This is kind of like getButtonPressed() in the other code
     
+    if(customKey != NO_KEY){
+        Serial.println("No key is being pressed");
+    }
+
     //If(button pressed on numpad){
         //Then change to color} else if(button pressed on numpad){
             //Then change to other color}...
@@ -59,7 +110,7 @@ void loop(){
     //If we wanted to add that you have to press and hold you could maybe add an else at the end or create a boolean and if one num on the numpad is pressed disable everything
     // here, so
 
-    char customKey = membraneKeypad.getKey();
+    
     
     leds[0] = CRGB(colors[0][0],colors[0][1], colors[0][2]);
     FastLED.show();
