@@ -1,7 +1,7 @@
 #include <FastLED.h>
 #include <Keypad.h>
 
-#define LED_PIN 9
+#define LED_PIN null
 #define NUM_LEDS 100
 
 CRGB leds[NUM_LEDS];
@@ -61,12 +61,12 @@ void testLEDs(int numLEDS){
         for(int i = 0; i < numLEDS; i++){
             leds[i] = CRGB(gradientA[q][1], gradientA[q][0], gradientA[q][2]);
             FastLED.show();
+            delay((3));
         }
         delay(500);
     }
-    fill_solid(leds, NUM_LEDS, CRGB(0,255,0));\
+    fill_solid(leds, NUM_LEDS, CRGB(0,255,0));
     delay(2000);
-  
 }
 
 
