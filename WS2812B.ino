@@ -61,12 +61,30 @@ void testLEDs(int numLEDS){
         for(int i = 0; i < numLEDS; i++){
             leds[i] = CRGB(gradientA[q][1], gradientA[q][0], gradientA[q][2]);
             FastLED.show();
-            delay((3));
+            delay((3)); //This cycles the LED's to make it a nice gradient. The delay is in milliseconds.
         }
         delay(500);
     }
     fill_solid(leds, NUM_LEDS, CRGB(0,255,0));
     delay(2000);
+}
+
+// This does an auto  gradient. It takes in the number of LEDs, the colors, the delay time, and the period (ie. how long it takes to go through the gradient(cycles). If it was 1 it would go through the gradient one time per strip.
+void autoGradient(int numLeds, int[][] colors, int delayTime, float period){
+    int totColors = sizeof colors / sizeof colors[0];   //This is to get the total number of colors in the array
+    int CPP = numLeds / totColors; //This is to get the number of LEDs per color
+    int DP = (period * CPP)(int); // This
+    int rt = 0;
+    for(int q = 0; q< totColors; q++){
+        for(rt; rt < numLeds; rt+=DP){
+            for(int j = 0; j<DP; j++){
+                leds[rt+j] = CRGB(colors[q][0], colors[q][1], colors[q][2]);
+                FastLED.show();
+                delay(delayTime);
+            }
+        }
+    }           
+
 }
 
 
