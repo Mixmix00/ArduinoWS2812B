@@ -112,7 +112,7 @@ void setup(){
         }
     }
 
-    //Here we are adding the leds. The first number is the type of led, so in this case WS2812 the second is the pin, the third is the color order
+    //Here we are adding the leds. The first number is the type of led, so in this case WS2812B. The second is the pin, and the third is the color order.
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
     FastLED.setBrightness(255);
 
