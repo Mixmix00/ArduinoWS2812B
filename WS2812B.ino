@@ -1,8 +1,8 @@
 #include <FastLED.h>
 #include <Keypad.h>
 
-#define LED_PIN null
-#define NUM_LEDS 100
+#define LED_PIN 13
+#define NUM_LEDS 300
 
 CRGB leds[NUM_LEDS];
 
@@ -15,8 +15,8 @@ char keypad[4][4] = {
   {'*','0','#','D'}
 };
 
-short rowPins[4] = {9, 8, 7, 6}; //connect to the row pinouts of the keypad
-short colPins[4] = {5, 4, 3, 2}; //connect to the column pinouts of the keypad
+byte rowPins[4] = {9, 8, 7, 6}; //connect to the row pinouts of the keypad
+byte colPins[4] = {5, 4, 3, 2}; //connect to the column pinouts of the keypad
 
 int colors[4][3] = {
     {200, 200, 200},
@@ -50,7 +50,7 @@ int gradientA[21][3] = {
     {51, 0, 102}
 } ;
 
-Keypad membraneKeypad;
+Keypad membraneKeypad = Keypad( makeKeymap(keypad), rowPins, colPins, 4, 4); //Creates the keypad
 
 /**This is to test the LEDs. It will go through the gradientA array and set the LEDs to the colors in the array. 
 *@param numLEDS is the number of LEDs you would like to test.
@@ -78,19 +78,24 @@ void testLEDs(int numLEDS){
  * @param period is the number of times you would like to cycle through the colors per @param numleds leds.
 */
 
-void autoGradient(int numLeds, int[numOfLeds][3] colors, int delayTime, float period){
-    int totColors = sizeof colors / sizeof colors[0];   //This is to get the total number of colors in the array
-    int CPP = numLeds / totColors; //This is to get the number of LEDs per color
-    int DBCP = (int)(period * CPP); // This
-    int rt = 0;
+void autoGradient(int delayTime, double period){
+    int totColors = sizeof gradientA / sizeof gradientA[0];   //This is to get the total number of colors in the array
+    Serial.println(totColors);   
+    int CPP = NUM_LEDS / totColors; //This is to get the number of LEDs per color
+    Serial.println(CPP);
+    double DBCP = (period * CPP); // This
+    Serial.println(DBCP);
+  
     for(int q = 0; q< totColors; q++){
-        for(rt; rt < numLeds; rt+=DBCP){
+        for(double rt = 0; rt < NUM_LEDS; rt+=DBCP){
             for(int j = 0; j<DBCP; j++){
-                leds[rt+j] = CRGB(colors[q][0], colors[q][1], colors[q][2]);
-                FastLED.show();
-                delay(delayTime);
+                leds[(int)rt+j] = CRGB(gradientA[q][0], gradientA[q][1], gradientA[q][2]);
+                
+                
             }
         }
+        FastLED.show();
+        delay(delayTime);
     }           
 
 }
@@ -99,7 +104,7 @@ void autoGradient(int numLeds, int[numOfLeds][3] colors, int delayTime, float pe
 
 void setup(){
     Serial.begin(9600);
-    membraneKeypad = Keypad( makeKeymap(keypad), rowPins, colPins, 4, 4); //Creates the keypad
+   
 
     //This is to make sure that the colors are not out of range
     for(int i = 0; i < sizeof colors / sizeof colors[0]; i++){
@@ -116,7 +121,10 @@ void setup(){
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
     FastLED.setBrightness(255);
 
-    testLEDs(NUM_LEDS);
+    //testLEDs(NUM_LEDS);
+    fill_solid(leds, NUM_LEDS, CRGB(255,0,0));
+    FastLED.show();
+    delay(2000);
     FastLED.clear();  // clear all pixel data
     FastLED.show();
 }
@@ -130,27 +138,27 @@ void loop(){
             break;
         case '1':
             Serial.println("1 is being pressed");
-            leds[0] = CRGB(colors[0][1],colors[0][0], colors[0][2]);
+            leds[0] = CRGB(colors[0][0],colors[0][1], colors[0][2]);
             FastLED.show();
             break;
         case '2':
             Serial.println("2 is being pressed");
-            leds[0] = CRGB(colors[1][1],colors[1][0], colors[1][2]);
+            leds[0] = CRGB(colors[1][0],colors[1][1], colors[1][2]);
             FastLED.show();
             break;
         case '3':
             Serial.println("3 is being pressed");
-            leds[0] = CRGB(colors[2][1],colors[2][0], colors[2][2]);
+            leds[0] = CRGB(colors[2][0],colors[2][1], colors[2][2]);
             FastLED.show();
             break;
         case '4':
             Serial.println("4 is being pressed");
-            leds[0] = CRGB(colors[3][1],colors[3][0], colors[3][2]);
-            FastLed.show();
+            leds[0] = CRGB(colors[3][0],colors[3][1], colors[3][2]);
+            FastLED.show();
             break;
         case 'A':
             Serial.println("A is being pressed");
-            autoGradient(NUM_LEDS, colors, 3, 1);
+            autoGradient(100, .33);
             break;
     }
 
