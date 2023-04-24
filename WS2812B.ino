@@ -17,6 +17,7 @@ char keypad[4][4] = {
 
 byte rowPins[4] = {9, 8, 7, 6}; //connect to the row pinouts of the keypad
 byte colPins[4] = {5, 4, 3, 2}; //connect to the column pinouts of the keypad
+boolean dontStopGradient = false;
 
 int colors[4][3] = {
     {200, 200, 200},
@@ -24,7 +25,7 @@ int colors[4][3] = {
     {50, 50, 50},
     {50, 100, 200}
 } ;
-
+Keypad membraneKeypad = Keypad( makeKeymap(keypad), rowPins, colPins, 4, 4); //Creates the keypad
 // List of colors for the gradient on testLEDs()
 int gradientA[21][3] = {
     {153, 0, 76},
@@ -50,7 +51,51 @@ int gradientA[21][3] = {
     {51, 0, 102}
 } ;
 
-Keypad membraneKeypad = Keypad( makeKeymap(keypad), rowPins, colPins, 4, 4); //Creates the keypad
+
+int gradient[7][3] = { // 2D array of colors (RGB values)
+  {255, 0, 0}, // red
+  {255, 127, 0}, // orange
+  {255, 255, 0}, // yellow
+  {0, 255, 0}, // green
+  {0, 0, 255}, // blue
+  {75, 0, 130}, // indigo
+  {148, 0, 211} // violet
+};
+
+void gradientCycle() {
+
+  int gradientIndex = 0; // start at the first color in the gradient
+  int step = 0; // start at the beginning of the gradient
+  while (dontStopGradient) { // loop until another key is pressed
+    if(membraneKeypad.getKey() != 'A'){
+      dontStopGradient = false;
+    }else{
+      dontStopGradient = true;
+      // set the current LED to the color at the current step in the gradient
+      leds[step] = CRGB(gradient[gradientIndex][0], gradient[gradientIndex][1], gradient[gradientIndex][2]);
+      // increment the step
+      step++;
+      // if we've reached the end of the LED array, start over at the beginning
+      if (step == NUM_LEDS) {
+        step = 0;
+      }
+      // increment the gradient index
+      gradientIndex++;
+      // if we've reached the end of the gradient, start over at the beginning
+      if (gradientIndex == 7) {
+        gradientIndex = 0;
+      }
+      // display the LED array
+      FastLED.show();
+      // wait for a short amount of time before cycling to the next color
+      delay(10);
+    }
+    
+
+  }
+}
+
+
 
 /**This is to test the LEDs. It will go through the gradientA array and set the LEDs to the colors in the array. 
 *@param numLEDS is the number of LEDs you would like to test.
@@ -79,6 +124,7 @@ void testLEDs(int numLEDS){
 */
 
 void autoGradient(int delayTime, double period){
+  if(!dontStopGradient){
     int totColors = sizeof gradientA / sizeof gradientA[0];   //This is to get the total number of colors in the array
     Serial.println(totColors);   
     int CPP = NUM_LEDS / totColors; //This is to get the number of LEDs per color
@@ -97,7 +143,7 @@ void autoGradient(int delayTime, double period){
         FastLED.show();
         delay(delayTime);
     }           
-
+  }
 }
 
 
@@ -135,30 +181,37 @@ void loop(){
     switch (customKey){
         case 'NO_KEY':
             Serial.println("No key is being pressed");
+            
             break;
         case '1':
+            dontStopGradient = false;
             Serial.println("1 is being pressed");
             leds[0] = CRGB(colors[0][0],colors[0][1], colors[0][2]);
             FastLED.show();
             break;
         case '2':
+            dontStopGradient = false;
             Serial.println("2 is being pressed");
             leds[0] = CRGB(colors[1][0],colors[1][1], colors[1][2]);
             FastLED.show();
             break;
         case '3':
+            dontStopGradient = false;
             Serial.println("3 is being pressed");
             leds[0] = CRGB(colors[2][0],colors[2][1], colors[2][2]);
             FastLED.show();
             break;
         case '4':
+            dontStopGradient = false;
             Serial.println("4 is being pressed");
             leds[0] = CRGB(colors[3][0],colors[3][1], colors[3][2]);
             FastLED.show();
             break;
         case 'A':
+            dontStopGradient = true;
             Serial.println("A is being pressed");
-            autoGradient(100, .33);
+            //autoGradient(100, .33);
+            gradientCycle();
             break;
     }
 
