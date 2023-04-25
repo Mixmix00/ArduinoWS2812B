@@ -62,8 +62,16 @@ int gradient[7][3] = { // 2D array of colors (RGB values)
   {148, 0, 211} // violet
 };
 
+void e(){
+  for(int i = 0; i<NUM_LEDS; i++){
+    leds[i] = CRGB(0,255,0);
+    FastLED.show();
+    delay(10);    
+  }
+}
+
 void gradientCycle() {
-  char anq;
+  String anq;
   int gradientIndex = 0; // start at the first color in the gradient
   int step = 0; // start at the beginning of the gradient
   while (dontStopGradient) { // loop until another key is pressed
@@ -88,10 +96,13 @@ void gradientCycle() {
       delay(10);
       if(anq == 'NO_KEY'){
         dontStopGradient = true;
+        Serial.println("nk");
       }else if(anq == 'A'){
         dontStopGradient = true;
+        Serial.println("a");
       }else{
         dontStopGradient = false;
+        Serial.println(anq);
       }
     
 
@@ -176,11 +187,15 @@ void setup(){
     delay(2000);
     FastLED.clear();  // clear all pixel data
     FastLED.show();
+    e();
+    FastLED.clear();
 }
 
 void loop(){
-    char customKey = membraneKeypad.getKey(); // This is to get the key that is pressed, if no key is pressed it will return NO_KEY. This is kind of like getButtonPressed() in the other code
+    String customKey = membraneKeypad.getKey(); // This is to get the key that is pressed, if no key is pressed it will return NO_KEY. This is kind of like getButtonPressed() in the other code
+    
 
+  
     switch (customKey){
         case 'NO_KEY':
             Serial.println("No key is being pressed");
