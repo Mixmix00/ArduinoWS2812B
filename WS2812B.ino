@@ -63,14 +63,11 @@ int gradient[7][3] = { // 2D array of colors (RGB values)
 };
 
 void gradientCycle() {
-
+  char anq;
   int gradientIndex = 0; // start at the first color in the gradient
   int step = 0; // start at the beginning of the gradient
   while (dontStopGradient) { // loop until another key is pressed
-    if(membraneKeypad.getKey() != 'A'){
-      dontStopGradient = false;
-    }else{
-      dontStopGradient = true;
+      anq = membraneKeypad.getKey();
       // set the current LED to the color at the current step in the gradient
       leds[step] = CRGB(gradient[gradientIndex][0], gradient[gradientIndex][1], gradient[gradientIndex][2]);
       // increment the step
@@ -89,7 +86,13 @@ void gradientCycle() {
       FastLED.show();
       // wait for a short amount of time before cycling to the next color
       delay(10);
-    }
+      if(anq == 'NO_KEY'){
+        dontStopGradient = true;
+      }else if(anq == 'A'){
+        dontStopGradient = true;
+      }else{
+        dontStopGradient = false;
+      }
     
 
   }
@@ -216,4 +219,4 @@ void loop(){
     }
 
 
-}
+}   
