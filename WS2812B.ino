@@ -193,7 +193,9 @@ void setup(){
 
 void loop(){
     char customKey = membraneKeypad.getKey(); // This is to get the key that is pressed, if no key is pressed it will return NO_KEY. This is kind of like getButtonPressed() in the other code
-    
+    int led_chosen;
+    int upperbound;
+    int lowerbound;
 
   
     switch (customKey){
@@ -202,9 +204,26 @@ void loop(){
             
             break;
         case '1':
+                        
             dontStopGradient = false;
+            FastLED.clear();
             Serial.println("1 is being pressed");
-            leds[0] = CRGB(colors[0][0],colors[0][1], colors[0][2]);
+            led_chosen = 1+ (rand() % NUM_LEDS);
+            if(led_chosen <10){
+              led_chosen = 10;
+            }else if(led_chosen >290){
+              led_chosen = 290;              
+            }
+            upperbound = led_chosen +2;
+            lowerbound = led_chosen -2;
+            FastLED.setBrightness(127+ (int) (led_chosen/NUM_LEDS *255)/2);
+            leds[led_chosen] = CRGB(colors[0][0],colors[0][1], colors[0][2]);
+            FastLED.show();
+            delay(750);
+            leds[upperbound] = CRGB(64,64,64);
+            //leds[upperbound].subtractFromRGB(200);
+            leds[lowerbound] = CRGB(64,64,64);
+            //leds[lowerbound].subtractFromRGB(200);
             FastLED.show();
             break;
         case '2':
