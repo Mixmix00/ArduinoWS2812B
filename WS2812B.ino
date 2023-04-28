@@ -18,6 +18,10 @@ char keypad[4][4] = {
 byte rowPins[4] = {9, 8, 7, 6}; //connect to the row pinouts of the keypad
 byte colPins[4] = {5, 4, 3, 2}; //connect to the column pinouts of the keypad
 boolean dontStopGradient = false;
+int score = 0;
+    int led_chosen;
+    int upperbound;
+    int lowerbound;
 
 int colors[4][3] = {
     {200, 200, 200},
@@ -159,7 +163,21 @@ void autoGradient(int delayTime, double period){
     }           
   }
 }
+int led_index;
 
+int GPS[15];
+void addGP(){
+  led_index = 1+ (rand() % NUM_LEDS);
+  if(led_index < upperbound && led_index > lowerbound){
+    Serial.println("rerolling");
+    addGP();
+  }else{
+    Serial.println(led_index);
+    leds[led_index] = CRGB(	255, 215, 0);
+    GPS[sizeof GPS] = led_index;
+    FastLED.show();
+  }
+}
 
 
 void setup(){
@@ -191,11 +209,9 @@ void setup(){
     FastLED.clear();
 }
 
+
 void loop(){
     char customKey = membraneKeypad.getKey(); // This is to get the key that is pressed, if no key is pressed it will return NO_KEY. This is kind of like getButtonPressed() in the other code
-    int led_chosen;
-    int upperbound;
-    int lowerbound;
 
   
     switch (customKey){
@@ -218,13 +234,26 @@ void loop(){
             lowerbound = led_chosen -2;
             FastLED.setBrightness(127+ (int) (led_chosen/NUM_LEDS *255)/2);
             leds[led_chosen] = CRGB(colors[0][0],colors[0][1], colors[0][2]);
+            Serial.println("----------------");
+            for(int i = 0; i<sizeof GPS; i++){
+              if(GPS[i] != 0){
+                leds[GPS[i]] = CRGB(	255, 215, 0);
+                Serial.println(GPS[i]);
+              }else{
+                Serial.println("shit");
+              }
+
+            }
             FastLED.show();
             delay(750);
             leds[upperbound] = CRGB(64,64,64);
             //leds[upperbound].subtractFromRGB(200);
             leds[lowerbound] = CRGB(64,64,64);
             //leds[lowerbound].subtractFromRGB(200);
+            
+
             FastLED.show();
+            Serial.println("----------------");
             break;
         case '2':
             dontStopGradient = false;
@@ -244,6 +273,10 @@ void loop(){
             leds[0] = CRGB(colors[3][0],colors[3][1], colors[3][2]);
             FastLED.show();
             break;
+        case '5':
+          Serial.println("5 is being pressed");
+          addGP();
+          break;
         case 'A':
             dontStopGradient = true;
             Serial.println("A is being pressed");
