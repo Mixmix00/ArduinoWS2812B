@@ -1,11 +1,12 @@
 #include <FastLED.h>
 #include <Keypad.h>
 
-#define LED_PIN 13
+#define LED_PIN_FOR_LED_STRIP 13
 #define NUM_LEDS 300
-
+#define DEFAULT_BRIGHTNESS 255
 CRGB leds[NUM_LEDS];
 
+String COLOR_ORDER = "GRB";
 
 //Gets the individual numpad buttons
 char keypad[4][4] = {
@@ -52,8 +53,8 @@ int gradientA[21][3] = {
 } ;
 
 
-
-void e(){
+// this is a function that cycles through the green color on all NUM_LEDS leds of the led strip
+void greenGradient(){
   for(int i = 0; i<NUM_LEDS; i++){
     leds[i] = CRGB(0,255,0);
     FastLED.show();
@@ -61,6 +62,7 @@ void e(){
   }
 }
 
+//this is a function to do a small cycle through a bunch of colors in the 2D array gradientA[][]
 void gradientCycle() {
   String anq;
   int gradientIndex = 0; // start at the first color in the gradient
@@ -136,8 +138,8 @@ void setup(){
     }
 
     //Here we are adding the leds. The first number is the type of led, so in this case WS2812B. The second is the pin, and the third is the color order.
-    FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
-    FastLED.setBrightness(255);
+    FastLED.addLeds<WS2812B, LED_PIN_FOR_LED_STRIP, COLOR_ORDER>(leds, NUM_LEDS);
+    FastLED.setBrightness(DEFAULT_BRIGHTNESS); // changing the brightness
 
     //testLEDs(NUM_LEDS);
     fill_solid(leds, NUM_LEDS, CRGB(255,0,0));
@@ -145,7 +147,7 @@ void setup(){
     delay(2000);
     FastLED.clear();  // clear all pixel data
     FastLED.show();
-    e();
+    greenGradient(); // doing a small green gradient
     FastLED.clear();
 }
 
