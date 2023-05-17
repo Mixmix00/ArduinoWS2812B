@@ -7,7 +7,7 @@
 CRGB leds[NUM_LEDS];
 
 
-  //Gets the individual numpad buttons
+//Gets the individual numpad buttons
 char keypad[4][4] = {
   {'1','2','3','A'},
   {'4','5','6','B'},
@@ -18,11 +18,7 @@ char keypad[4][4] = {
 byte rowPins[4] = {9, 8, 7, 6}; //connect to the row pinouts of the keypad
 byte colPins[4] = {5, 4, 3, 2}; //connect to the column pinouts of the keypad
 boolean dontStopGradient = false;
-int score = 0;
-    int led_chosen;
-    int upperbound;
-    int lowerbound;
-
+// 2D array of some solid test colors
 int colors[4][3] = {
     {200, 200, 200},
     {100, 100, 100},
@@ -30,7 +26,7 @@ int colors[4][3] = {
     {50, 100, 200}
 } ;
 Keypad membraneKeypad = Keypad( makeKeymap(keypad), rowPins, colPins, 4, 4); //Creates the keypad
-// List of colors for the gradient on testLEDs()
+// 2D array of some random colors 
 int gradientA[21][3] = {
     {153, 0, 76},
     {204, 0, 102},
@@ -56,15 +52,6 @@ int gradientA[21][3] = {
 } ;
 
 
-int gradient[7][3] = { // 2D array of colors (RGB values)
-  {255, 0, 0}, // red
-  {255, 127, 0}, // orange
-  {255, 255, 0}, // yellow
-  {0, 255, 0}, // green
-  {0, 0, 255}, // blue
-  {75, 0, 130}, // indigo
-  {148, 0, 211} // violet
-};
 
 void e(){
   for(int i = 0; i<NUM_LEDS; i++){
@@ -81,7 +68,7 @@ void gradientCycle() {
   while (dontStopGradient) { // loop until another key is pressed
       anq = membraneKeypad.getKey();
       // set the current LED to the color at the current step in the gradient
-      leds[step] = CRGB(gradient[gradientIndex][0], gradient[gradientIndex][1], gradient[gradientIndex][2]);
+      leds[step] = CRGB(gradientA[gradientIndex][0], gradientA[gradientIndex][1], gradientA[gradientIndex][2]);
       // increment the step
       step++;
       // if we've reached the end of the LED array, start over at the beginning
@@ -91,7 +78,7 @@ void gradientCycle() {
       // increment the gradient index
       gradientIndex++;
       // if we've reached the end of the gradient, start over at the beginning
-      if (gradientIndex == 7) {
+      if (gradientIndex == 21) {
         gradientIndex = 0;
       }
       // display the LED array
@@ -116,8 +103,8 @@ void gradientCycle() {
 
 
 /**This is to test the LEDs. It will go through the gradientA array and set the LEDs to the colors in the array. 
-*@param numLEDS is the number of LEDs you would like to test.
-*Currently configured to test LEDs that have GRB color order (for some reason).
+* @param numLEDS is the number of LEDs you would like to test.
+* Currently configured to test LEDs that have GRB color order (for some reason).
 */
 void testLEDs(int numLEDS){ 
     for(int q = 0; q < 21; q++){
@@ -130,53 +117,6 @@ void testLEDs(int numLEDS){
     }
     fill_solid(leds, NUM_LEDS, CRGB(0,255,0));
     delay(2000);
-}
-
-// This does an auto  gradient. It takes in the number of LEDs, the colors, the delay time, and the period (ie. how long it takes to go through the gradient(cycles). If it was 1 it would go through the gradient one time per strip.
-/**
- * This is a function that will do an auto gradient.
- * @param numLeds is the number of LEDs in the stri
- * @param colors is the 2D array of colors that you want to use in the gradient.
- * @param delayTime is the time in milliseconds that you want to wait between each LED lighting up.
- * @param period is the number of times you would like to cycle through the colors per @param numleds leds.
-*/
-
-void autoGradient(int delayTime, double period){
-  if(!dontStopGradient){
-    int totColors = sizeof gradientA / sizeof gradientA[0];   //This is to get the total number of colors in the array
-    Serial.println(totColors);   
-    int CPP = NUM_LEDS / totColors; //This is to get the number of LEDs per color
-    Serial.println(CPP);
-    double DBCP = (period * CPP); // This
-    Serial.println(DBCP);
-  
-    for(int q = 0; q< totColors; q++){
-        for(double rt = 0; rt < NUM_LEDS; rt+=DBCP){
-            for(int j = 0; j<DBCP; j++){
-                leds[(int)rt+j] = CRGB(gradientA[q][0], gradientA[q][1], gradientA[q][2]);
-                
-                
-            }
-        }
-        FastLED.show();
-        delay(delayTime);
-    }           
-  }
-}
-int led_index;
-
-int GPS[15];
-void addGP(){
-  led_index = 1+ (rand() % NUM_LEDS);
-  if(led_index < upperbound && led_index > lowerbound){
-    Serial.println("rerolling");
-    addGP();
-  }else{
-    Serial.println(led_index);
-    leds[led_index] = CRGB(	255, 215, 0);
-    GPS[sizeof GPS] = led_index;
-    FastLED.show();
-  }
 }
 
 
@@ -212,48 +152,17 @@ void setup(){
 
 void loop(){
     char customKey = membraneKeypad.getKey(); // This is to get the key that is pressed, if no key is pressed it will return NO_KEY. This is kind of like getButtonPressed() in the other code
-
+    // please note, this is a char, so it will never be able to return NO_KEY.
   
     switch (customKey){
-        case 'NO_KEY':
-            Serial.println("No key is being pressed");
-            
-            break;
         case '1':
                         
             dontStopGradient = false;
             FastLED.clear();
             Serial.println("1 is being pressed");
-            led_chosen = 1+ (rand() % NUM_LEDS);
-            if(led_chosen <10){
-              led_chosen = 10;
-            }else if(led_chosen >290){
-              led_chosen = 290;              
-            }
-            upperbound = led_chosen +2;
-            lowerbound = led_chosen -2;
-            FastLED.setBrightness(127+ (int) (led_chosen/NUM_LEDS *255)/2);
-            leds[led_chosen] = CRGB(colors[0][0],colors[0][1], colors[0][2]);
-            Serial.println("----------------");
-            for(int i = 0; i<sizeof GPS; i++){
-              if(GPS[i] != 0){
-                leds[GPS[i]] = CRGB(	255, 215, 0);
-                Serial.println(GPS[i]);
-              }else{
-                Serial.println("shit");
-              }
-
-            }
-            FastLED.show();
+            leds[1+ (rand() % NUM_LEDS)] = CRGB(0,255,0);
             delay(750);
-            leds[upperbound] = CRGB(64,64,64);
-            //leds[upperbound].subtractFromRGB(200);
-            leds[lowerbound] = CRGB(64,64,64);
-            //leds[lowerbound].subtractFromRGB(200);
-            
-
             FastLED.show();
-            Serial.println("----------------");
             break;
         case '2':
             dontStopGradient = false;
@@ -275,14 +184,25 @@ void loop(){
             break;
         case '5':
           Serial.println("5 is being pressed");
-          addGP();
+
+          break;
+        case '6':
+          //making a small amount of LEDs red at the end of the strip.
+          for(int i = 280; i<NUM_LEDS; i++){
+            leds[i] = CRGB(255,0,0);
+            FastLED.show();
+          }
+
+          
+          FastLED.show();
           break;
         case 'A':
             dontStopGradient = true;
             Serial.println("A is being pressed");
-            //autoGradient(100, .33);
             gradientCycle();
             break;
+        default:
+          Serial.println("The switch in the run loop is set to default");
     }
 
 
