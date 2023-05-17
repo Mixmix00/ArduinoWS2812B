@@ -10,9 +10,8 @@
     b)Keypad (can be downloaded from the Arduino Library Manager or from the Keypad GitHub)
 <h2>Usage</h2>
 This code allows you to press a button to make an LED change color.<br>
-You can also use a method to do a gradient.
+You can also use a method to do a gradient
 <h2>Notes</h2>
-The code *assumes* that the LED strip has *GRB* color order. If your LED strip has a different color order, you may need to modify the code accordingly.<br>
 The code includes a function to limit the color values to a range of 0-255. If your LED strip for some god awful reason uses a different color range, you may need to modify the code accordingly.
 <h3>Contributors</h3>
 Max Spier <strong>(<a href="https://github.com/TTVMixmix00/">Github</a>)</strong>
